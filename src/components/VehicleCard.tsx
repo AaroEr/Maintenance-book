@@ -3,6 +3,7 @@ type Vehicle = {
     register: string
     brand: string
     model: string
+    year: string
 }
 
 type Props = {
@@ -15,6 +16,7 @@ const VehicleCard = ({ vehicle }: Props ) => {
             <h2 className="text-lg font-semibold">{vehicle.brand}</h2>
             <p>{vehicle.model}</p>
             <p>{vehicle.register}</p>
+            <p>{vehicle.year}</p>
         </div>
     )
 }

@@ -8,13 +8,14 @@ type Vehicle = {
     register: string
     brand: string
     model: string
+    year: string
 }
 
 const CardGrid = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([
-        {id: 1, brand: "Porche", model: "911 Carrera Coupé", register: "QQQ-911"},
-        {id: 2, brand: "Ford", model: "Focus", register: "ABC-123"},
-        {id: 3, brand: "Kia", model: "Ceed", register: "ABC-111"}
+        {id: 1, brand: "Porsche", model: "911 Carrera Coupé", register: "QQQ-911", year: "2011"},
+        {id: 2, brand: "Ford", model: "Focus", register: "ABC-123", year: "2020"},
+        {id: 3, brand: "Kia", model: "Ceed", register: "ABC-111", year: "2024"}
     ])
 
     const [isModalOpen, setModalOpen] = useState(false)
@@ -27,12 +28,13 @@ const CardGrid = () => {
       setModalOpen(false)
     }
 
-    const handleSaveVehicle = (formData: { register: string; brand: string; model: string }) => {
+    const handleSaveVehicle = (formData: { register: string; brand: string; model: string, year: string}) => {
       const newVehicle: Vehicle = {
         id: Date.now(),
         register: formData.register,
         brand: formData.brand,
         model: formData.model,
+        year: formData.year,
       };
       setVehicles(prev => [...prev, newVehicle])
       setModalOpen(false)

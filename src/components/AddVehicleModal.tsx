@@ -4,6 +4,7 @@ type VehicleFormData = {
   register: string;
   brand: string;
   model: string;
+  year: string;
 }
 
 type AddVehicleModalProps = {
@@ -17,6 +18,7 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
     register: "",
     brand: "",
     model: "",
+    year: "",
   })
 
   if (!isOpen) return null
@@ -24,7 +26,7 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
-    setFormData({ register: "", brand: "", model: "" })
+    setFormData({ register: "", brand: "", model: "", year: ""})
   }
 
   return (
@@ -63,7 +65,20 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
               placeholder="Enter the model of the vehicle"
               required
             />
-          </div> 
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Year</label>
+            <input
+              type="text"
+              value={formData.year}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, year: e.target.value }))
+              }
+              className="w-full mt-1 p-2 border rounded-md"
+              placeholder="Enter the model year"
+              required
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium">License plate number</label>
             <input
