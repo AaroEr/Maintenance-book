@@ -5,6 +5,7 @@ type MaintenanceEntry = {
   type: string
   description: string
   date: string
+  mileage: string
 }
 
 type Vehicle = {
@@ -21,7 +22,7 @@ type ViewVehicleModalProps = {
     isOpen: boolean
     onClose: () => void
     onDelete: (id: number) => void
-    onAddMaintenance: (vehicleId: number, entry: MaintenanceEntry) => void
+    onAddMaintenance: (vehicleId: number, entry: MaintenanceEntry, newMileage: string) => void
     vehicle: Vehicle
 }
 
@@ -29,6 +30,8 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
   const [isAdding, setIsAdding] = useState(false)
   const [type, setType] = useState("")
   const [description, setDescription] = useState("")
+  const [mileage, setMileage] = useState("")
+
 
     if (!isOpen) return null
 
@@ -39,16 +42,19 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
         type,
         description,
         date: new Date().toLocaleDateString(),
+        mileage,
       }
-      onAddMaintenance(vehicle.id, newEntry)
+      onAddMaintenance(vehicle.id, newEntry, mileage)
       setType("")
       setDescription("")
+      setMileage("")
       setIsAdding(false)
     }
 
     const resetMaintenanceForm = () => {
       setType("")
       setDescription("")
+      setMileage("")
       setIsAdding(false)
     }
     
@@ -77,6 +83,7 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
               {vehicle.maintenanceLog.map(entry => (
                 <li key={entry.id} className="border rounded-md p-3 bg-gray-100">
                   <p className="text-sm text-gray-500">{entry.date}</p>
+                  <p className="text-sm text-gray-500">Mileage: {entry.mileage} km</p>
                   <p className="font-semibold">{entry.type}</p>
                   <p className="text-sm">{entry.description}</p>
                 </li>
@@ -99,6 +106,17 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
 
           {isAdding && (
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium">Current mileage</label>
+                <input
+                  type="text"
+                  value={mileage}
+                  onChange={(e) => setMileage(e.target.value)}
+                  className="w-full mt-1 p-2 border rounded-md"
+                  placeholder="Enter current mileage"
+                  required
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium">Type</label>
                 <input

@@ -9,6 +9,7 @@ type MaintenanceEntry = {
   type: string
   description: string
   date: string
+  mileage: string
 }
 
 type Vehicle = {
@@ -30,7 +31,8 @@ const CardGrid = () => {
 
     const [isModalOpen, setModalOpen] = useState(false)
     const [isViewModalOpen, setViewModalOpen] = useState(false)
-    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
+    const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null)
+
 
     const handleModalOpen = () => {
       setModalOpen(true)
@@ -54,14 +56,14 @@ const CardGrid = () => {
     }
 
     const handleViewVehicle = (vehicle: Vehicle) => {
-      setSelectedVehicle(vehicle)
+      setSelectedVehicleId(vehicle.id)
       setViewModalOpen(true)
-    }
+    }    
 
     const handleCloseViewModal = () => {
-      setSelectedVehicle(null)
+      setSelectedVehicleId(null)
       setViewModalOpen(false)
-    }
+    }    
 
     const handleDeleteVehicle = (id: number) => {
       const confirmed = window.confirm("Are you sure you want to delete this vehicle and all associated data and logs?")
@@ -70,12 +72,13 @@ const CardGrid = () => {
       setViewModalOpen(false)
     }
 
-    const handleAddMaintenance = (vehicleId: number, entry: MaintenanceEntry) => {
+    const handleAddMaintenance = (vehicleId: number, entry: MaintenanceEntry, newMileage: string) => {
       setVehicles((prev) =>
         prev.map((v) =>
           v.id === vehicleId
             ? {
                 ...v,
+                mileage: newMileage,
                 maintenanceLog: [...(v.maintenanceLog || []), entry],
               }
             : v
@@ -102,15 +105,15 @@ return (
       onSave={handleSaveVehicle}
     />
 
-    {selectedVehicle && (
-      <ViewVehicleModal
-        isOpen={isViewModalOpen}
-        onClose={handleCloseViewModal}
-        onDelete={handleDeleteVehicle}
-        onAddMaintenance={handleAddMaintenance}
-        vehicle={selectedVehicle}
-      />
-    )}
+{selectedVehicleId !== null && (
+  <ViewVehicleModal
+    isOpen={isViewModalOpen}
+    onClose={handleCloseViewModal}
+    onDelete={handleDeleteVehicle}
+    onAddMaintenance={handleAddMaintenance}
+    vehicle={vehicles.find(v => v.id === selectedVehicleId)!}
+  />
+)}
   </>
   )
 }
