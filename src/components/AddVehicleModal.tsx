@@ -5,6 +5,7 @@ type VehicleFormData = {
   brand: string;
   model: string;
   year: string;
+  mileage: string;
 }
 
 type AddVehicleModalProps = {
@@ -19,6 +20,7 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
     brand: "",
     model: "",
     year: "",
+    mileage: "",
   })
 
   if (!isOpen) return null
@@ -26,7 +28,7 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
-    setFormData({ register: "", brand: "", model: "", year: ""})
+    setFormData({ register: "", brand: "", model: "", year: "", mileage: ""})
   }
 
   return (
@@ -89,6 +91,19 @@ const AddVehicleModal = ({ isOpen, onClose, onSave }: AddVehicleModalProps) => {
               }
               className="w-full mt-1 p-2 border rounded-md"
               placeholder="Enter license plate number"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Mileage</label>
+            <input
+              type="text"
+              value={formData.mileage}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, mileage: e.target.value }))
+              }
+              className="w-full mt-1 p-2 border rounded-md"
+              placeholder="Enter mileage in km"
               required
             />
           </div>
