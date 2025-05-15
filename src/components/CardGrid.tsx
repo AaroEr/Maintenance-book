@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { auth } from "../firebase"
 import VehicleCard from "./VehicleCard"
 import AddCard from "./AddCard"
 import AddVehicleModal from "./AddVehicleModal"
@@ -20,18 +21,23 @@ type Vehicle = {
     year: string
     mileage: string
     maintenanceLog?: MaintenanceEntry[]
+    ownerId: string
 }
 
 const CardGrid = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([
-        {id: 1, brand: "Porsche", model: "911 Carrera Coupé", register: "QQQ-911", year: "2011", mileage: "90 000"},
-        {id: 2, brand: "Ford", model: "Focus", register: "ABC-123", year: "2020", mileage: "200 000"},
-        {id: 3, brand: "Kia", model: "Ceed", register: "ABC-111", year: "2024", mileage: "120 000"}
+        {id: 1, brand: "Porsche", model: "911 Carrera Coupé", register: "QQQ-911", year: "2011", mileage: "90 000", ownerId: "ZL4eiyCcWeNzPftonzeIePiMYF33"},
+        {id: 2, brand: "Ford", model: "Focus", register: "ABC-123", year: "2020", mileage: "200 000", ownerId: "ZL4eiyCcWeNzPftonzeIePiMYF33"},
+        {id: 3, brand: "Kia", model: "Ceed", register: "ABC-111", year: "2024", mileage: "120 000", ownerId: "HoXlSQUvHZhuSpudWGxaG15iDOH3"}
     ])
 
     const [isModalOpen, setModalOpen] = useState(false)
     const [isViewModalOpen, setViewModalOpen] = useState(false)
     const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null)
+
+    const currentUser = auth.currentUser
+
+    const visibleVehicles = vehicles.filter(v => v.ownerId === currentUser?.uid)
 
 
     const handleModalOpen = () => {
@@ -43,6 +49,9 @@ const CardGrid = () => {
     }
 
     const handleSaveVehicle = (formData: { register: string; brand: string; model: string, year: string, mileage: string}) => {
+      const currentUser = auth.currentUser
+      if (!currentUser) return
+
       const newVehicle: Vehicle = {
         id: Date.now(),
         register: formData.register,
@@ -50,6 +59,7 @@ const CardGrid = () => {
         model: formData.model,
         year: formData.year,
         mileage: formData.mileage,
+        ownerId: currentUser.uid,
       };
       setVehicles(prev => [...prev, newVehicle])
       setModalOpen(false)
@@ -89,7 +99,7 @@ const CardGrid = () => {
 return (
   <>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4 mt-4">
-      {vehicles.map(vehicle => (
+      {visibleVehicles.map(vehicle => (
         <VehicleCard
           key={vehicle.id}
           vehicle={vehicle}
