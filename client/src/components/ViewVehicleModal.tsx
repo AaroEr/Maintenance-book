@@ -9,7 +9,7 @@ type MaintenanceEntry = {
 }
 
 type Vehicle = {
-    id: number
+    _id: string
     register: string
     brand: string
     model: string
@@ -21,8 +21,8 @@ type Vehicle = {
 type ViewVehicleModalProps = {
     isOpen: boolean
     onClose: () => void
-    onDelete: (id: number) => void
-    onAddMaintenance: (vehicleId: number, entry: MaintenanceEntry, newMileage: string) => void
+    onDelete: (_id: string) => void
+    onAddMaintenance: (vehicleId: string, entry: MaintenanceEntry, newMileage: string) => void
     vehicle: Vehicle
 }
 
@@ -44,7 +44,7 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
         date: new Date().toLocaleDateString(),
         mileage,
       }
-      onAddMaintenance(vehicle.id, newEntry, mileage)
+      onAddMaintenance(vehicle._id, newEntry, mileage)
       setType("")
       setDescription("")
       setMileage("")
@@ -146,7 +146,7 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
           )}
           <div className="flex justify-end">
             <button
-              onClick={() => onDelete(vehicle.id)}
+              onClick={() => onDelete(vehicle._id)}
               className="bg-red-600 hover:bg-red-800 cursor-pointer text-white px-4 py-2 rounded-md"
             >
               Delete vehicle

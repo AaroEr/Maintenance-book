@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { auth } from "../firebase"
 import VehicleCard from "./VehicleCard"
 import AddCard from "./AddCard"
@@ -14,7 +14,7 @@ type MaintenanceEntry = {
 }
 
 type Vehicle = {
-    id: number
+    _id: string
     register: string
     brand: string
     model: string
@@ -25,17 +25,29 @@ type Vehicle = {
 }
 
 const CardGrid = () => {
-    const [vehicles, setVehicles] = useState<Vehicle[]>([
-        {id: 1, brand: "Porsche", model: "911 Carrera Coupé", register: "QQQ-911", year: "2011", mileage: "90 000", ownerId: "ZL4eiyCcWeNzPftonzeIePiMYF33"},
-        {id: 2, brand: "Ford", model: "Focus", register: "ABC-123", year: "2020", mileage: "200 000", ownerId: "ZL4eiyCcWeNzPftonzeIePiMYF33"},
-        {id: 3, brand: "Kia", model: "Ceed", register: "ABC-111", year: "2024", mileage: "120 000", ownerId: "HoXlSQUvHZhuSpudWGxaG15iDOH3"}
-    ])
+    const [vehicles, setVehicles] = useState<Vehicle[]>([])
+
 
     const [isModalOpen, setModalOpen] = useState(false)
     const [isViewModalOpen, setViewModalOpen] = useState(false)
-    const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null)
+    const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
 
     const currentUser = auth.currentUser
+
+    useEffect(() => {
+      const fetchVehicles = async () => {
+        try {
+          const res = await fetch("http://localhost:5000/api/vehicles")
+          const data = await res.json()
+          setVehicles(data)
+        } catch (error) {
+          console.error("Failed to fetch vehicles", error)
+        }
+      }
+
+      fetchVehicles()
+    }, [])
+
 
     const visibleVehicles = vehicles.filter(v => v.ownerId === currentUser?.uid)
 
@@ -48,25 +60,45 @@ const CardGrid = () => {
       setModalOpen(false)
     }
 
-    const handleSaveVehicle = (formData: { register: string; brand: string; model: string, year: string, mileage: string}) => {
+    const handleSaveVehicle = async (formData: {
+      register: string
+      brand: string
+      model: string
+      year: string
+      mileage: string
+    }) => {
       const currentUser = auth.currentUser
       if (!currentUser) return
 
-      const newVehicle: Vehicle = {
-        id: Date.now(),
-        register: formData.register,
-        brand: formData.brand,
-        model: formData.model,
-        year: formData.year,
-        mileage: formData.mileage,
+      const vehicleData = {
+        ...formData,
         ownerId: currentUser.uid,
-      };
-      setVehicles(prev => [...prev, newVehicle])
-      setModalOpen(false)
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/vehicles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(vehicleData),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to save vehicle')
+        }
+
+        const savedVehicle = await response.json()
+        setVehicles((prev) => [...prev, savedVehicle])
+        setModalOpen(false)
+      } catch (error) {
+        console.error('Error saving vehicle:', error)
+        alert('Error saving vehicle')
+      }
     }
 
     const handleViewVehicle = (vehicle: Vehicle) => {
-      setSelectedVehicleId(vehicle.id)
+      setSelectedVehicleId(vehicle._id)
       setViewModalOpen(true)
     }    
 
@@ -75,17 +107,31 @@ const CardGrid = () => {
       setViewModalOpen(false)
     }    
 
-    const handleDeleteVehicle = (id: number) => {
+    const handleDeleteVehicle = async (_id: string) => {
       const confirmed = window.confirm("Are you sure you want to delete this vehicle and all associated data and logs?")
       if (!confirmed) return
-      setVehicles(prev => prev.filter(v => v.id !== id))
-      setViewModalOpen(false)
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/vehicles/${_id}`, {
+          method: 'DELETE',
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to delete vehicle')
+        }
+
+        setVehicles(prev => prev.filter(v => v._id !== _id))
+        setViewModalOpen(false)
+      } catch (error) {
+        console.error("Error deleting vehicle:", error)
+        alert("Error deleting vehicle")
+      }
     }
 
-    const handleAddMaintenance = (vehicleId: number, entry: MaintenanceEntry, newMileage: string) => {
+    const handleAddMaintenance = (vehicleId: string, entry: MaintenanceEntry, newMileage: string) => {
       setVehicles((prev) =>
         prev.map((v) =>
-          v.id === vehicleId
+          v._id === vehicleId
             ? {
                 ...v,
                 mileage: newMileage,
@@ -101,7 +147,7 @@ return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4 mt-4">
       {visibleVehicles.map(vehicle => (
         <VehicleCard
-          key={vehicle.id}
+          key={vehicle._id}
           vehicle={vehicle}
           onClick={() => handleViewVehicle(vehicle)}
         />
@@ -121,7 +167,7 @@ return (
     onClose={handleCloseViewModal}
     onDelete={handleDeleteVehicle}
     onAddMaintenance={handleAddMaintenance}
-    vehicle={vehicles.find(v => v.id === selectedVehicleId)!}
+    vehicle={vehicles.find(v => v._id === selectedVehicleId)!}
   />
 )}
   </>

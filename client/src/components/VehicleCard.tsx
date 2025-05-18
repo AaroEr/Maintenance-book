@@ -1,5 +1,5 @@
 type Vehicle = {
-    id: number
+    _id: string
     register: string
     brand: string
     model: string
