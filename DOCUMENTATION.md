@@ -30,6 +30,20 @@ Maintenance-book-main/
 
 ---
 
+## 🧰 Tools Used
+
+This project uses modern full-stack web development tools:
+
+- **React**: A JavaScript library for building user interfaces. In this project, it's used to render all frontend components and manage user interaction.
+- **TypeScript**: A typed superset of JavaScript. It helps catch errors early and improves code readability, especially in larger React apps.
+- **Tailwind CSS**: A utility-first CSS framework used to create a clean and responsive UI without writing custom CSS.
+- **Firebase Authentication**: Provides secure user authentication (register, login) with minimal configuration.
+- **Express.js**: A lightweight Node.js web framework used to build the RESTful backend API.
+- **MongoDB (via Mongoose)**: A NoSQL database to store vehicle and maintenance data per user.
+- **Vite**: A fast development server and build tool used to run the frontend.
+
+---
+
 ## 🧩 Frontend
 
 The frontend is built with **React** and **TypeScript**, using **Tailwind CSS** for styling.
@@ -97,12 +111,12 @@ Each vehicle includes:
 
 ## 🚧 Known Limitations & Future Improvements
 
-- **Editing or deleting individual maintenance records is not possible.**
-  - This could be improved by adding unique IDs for each record and creating edit/delete endpoints.
-- **No backend validation or error handling**
-  - More robust input checks and feedback for the user would improve reliability.
+- **Editing or deleting individual maintenance records is not currently possible.**
+  - Each record has a unique ID (generated with `Date.now()`), and MongoDB also assigns an `_id`, but edit/delete endpoints are not implemented yet.
+- **No server-side validation or error handling**
+  - The browser handles basic input validation, but the backend does not check incoming data (e.g. missing fields or invalid formats).
 - **No unit or integration testing implemented**
-  - Only manual testing with HTTP requests was used.
+  - Only manual testing with HTTP requests was used during development.
 
 ---
 
@@ -184,4 +198,7 @@ This is needed because the backend server uses MongoDB to store vehicle and main
 
 ## 📎 Summary
 
-This documentation explains the internal structure of the Maintenance Book project for review purposes. For a full list of features and installation instructions, see the [README.md](./README.md). Code was written with learning in mind, and while AI helped with tricky parts, understanding and validation were always done by the developers.
+This documentation explains the internal structure of the Maintenance Book project.  
+For full instructions on how to run the project locally, see the [Development Notes](#-development-notes) section above.  
+
+Code was written with learning in mind, and while AI helped with tricky parts, understanding and validation were always done by the developers.
