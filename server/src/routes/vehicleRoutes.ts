@@ -53,4 +53,24 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
+router.post("/:id/maintenance", async (req, res) => {
+  const { id } = req.params
+  const entry = req.body
+
+  try {
+    const vehicle = await Vehicle.findById(id)
+    if (!vehicle) {
+      return res.status(404).json({ error: "Vehicle not found" })
+    }
+
+    vehicle.maintenanceLog.push(entry)
+    vehicle.mileage = entry.mileage
+    await vehicle.save()
+
+    res.json(vehicle)
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add maintenance entry" })
+  }
+})
+
 export default router

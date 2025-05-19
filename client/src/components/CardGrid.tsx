@@ -128,18 +128,29 @@ const CardGrid = () => {
       }
     }
 
-    const handleAddMaintenance = (vehicleId: string, entry: MaintenanceEntry, newMileage: string) => {
-      setVehicles((prev) =>
-        prev.map((v) =>
-          v._id === vehicleId
-            ? {
-                ...v,
-                mileage: newMileage,
-                maintenanceLog: [...(v.maintenanceLog || []), entry],
-              }
-            : v
+    const handleAddMaintenance = async (vehicleId: string, entry: MaintenanceEntry) => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/vehicles/${vehicleId}/maintenance`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(entry)
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to add maintenance entry")
+        }
+
+        const updatedVehicle = await response.json()
+
+        setVehicles((prev) =>
+          prev.map((v) => (v._id === vehicleId ? updatedVehicle : v))
         )
-      )
+      } catch (error) {
+        console.error("Error adding maintenance:", error)
+        alert("Error adding maintenance")
+      }
     }
 
 return (

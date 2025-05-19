@@ -22,7 +22,7 @@ type ViewVehicleModalProps = {
     isOpen: boolean
     onClose: () => void
     onDelete: (_id: string) => void
-    onAddMaintenance: (vehicleId: string, entry: MaintenanceEntry, newMileage: string) => void
+    onAddMaintenance: (vehicleId: string, entry: MaintenanceEntry) => void
     vehicle: Vehicle
 }
 
@@ -44,7 +44,7 @@ const ViewVehicleModal = ({ isOpen, onClose, onDelete, onAddMaintenance, vehicle
         date: new Date().toLocaleDateString(),
         mileage,
       }
-      onAddMaintenance(vehicle._id, newEntry, mileage)
+      onAddMaintenance(vehicle._id, newEntry)
       setType("")
       setDescription("")
       setMileage("")
